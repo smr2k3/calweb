@@ -1,0 +1,48 @@
+pipeline {
+    agent any
+    stages {
+        stage('Source') {
+            steps {
+                    git changelog: false, credentialsId: '9cb68fe9-9624-46d7-8a16-6d633a93cc92', poll: false, url: 'https://github.com/smr2k3/calcwebapp.git';
+            }
+        }
+        
+        stage('Test') {
+            steps {
+                    bat label: '', script: 'mvn test';
+            }
+        }
+        
+        stage('Package') {
+            steps {
+                    bat label: '', script: 'mvn package'; 
+                /*sh exit ("1");*/
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                  echo "Pass!";
+            }
+        }
+        
+    }
+    post {
+        always {
+            echo 'This will always run'
+        }
+        success {
+            echo 'This will run only if successful'
+        }
+        failure {
+            echo 'This will run only if failed'
+        }
+        unstable {
+            echo 'This will run only if the run was marked as unstable'
+        }
+        changed {
+            echo 'This will run only if the state of the Pipeline has changed'
+            echo 'For example, if the Pipeline was previously failing but is now successful'
+        }
+    }
+}
